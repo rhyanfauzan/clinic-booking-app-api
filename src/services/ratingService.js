@@ -27,7 +27,35 @@ async function getAllRatings() {
   }
 }
 
+async function getAllRatingsByDoctorId(doctorId) {
+  try {
+    const query = `
+      SELECT * FROM rating
+      WHERE doctor_id = ?;
+    `;
+    const [doctorRatings] = await db.query(query, [doctorId]);
+
+    return doctorRatings;
+  } catch (error) {
+    throw new Error('Error fetching ratings for the doctor');
+  }
+}
+
+async function deleteRatingById(ratingId) {
+  try {
+    const query = `
+      DELETE FROM rating
+      WHERE id = ?
+    `;
+    await db.query(query, [ratingId]);
+  } catch (error) {
+    throw new Error('Error deleting rating');
+  }
+}
+
 module.exports = {
   createRating,
   getAllRatings,
+  getAllRatingsByDoctorId,
+  deleteRatingById,
 };
