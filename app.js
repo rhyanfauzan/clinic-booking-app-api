@@ -1,9 +1,9 @@
 // app.js - Application Entry Point
 const express = require('express');
 const bodyParser = require('body-parser');
-const userRoutes = require('./routes/userRoutes');
-const doctorRoutes = require('./routes/doctorRoutes');
-const appointmentRoutes = require('./routes/appointmentRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const doctorRoutes = require('./src/routes/doctorRoutes');
+const appointmentRoutes = require('./src/routes/appointmentRoutes');
 
 const app = express();
 const port = 3000;

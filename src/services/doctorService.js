@@ -1,5 +1,5 @@
 // services/doctorService.js - Doctor Service Handling Database Operations
-const db = require('../db');
+const db = require('../../db');
 
 async function searchDoctors(searchQuery) {
   try {

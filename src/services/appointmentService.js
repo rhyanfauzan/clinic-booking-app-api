@@ -1,5 +1,5 @@
 // services/appointmentService.js - Appointment Service Handling Database Operations
-const db = require('../db');
+const db = require('../../db');
 async function scheduleAppointment(
   doctorId,
   patientName,
