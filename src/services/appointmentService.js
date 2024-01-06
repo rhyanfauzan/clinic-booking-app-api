@@ -2,19 +2,17 @@
 const db = require('../../db');
 async function scheduleAppointment(
   doctorId,
-  patientName,
+  patientId,
   appointmentDate,
-  userId,
   description
 ) {
   try {
     const query =
-      'INSERT INTO appointments (doctor_id, patient_name, appointment_date, user_id, description) VALUES (?, ?, ?, ?, ?)';
+      'INSERT INTO appointments (doctor_id, patient_id, appointment_date, description) VALUES (?, ?, ?, ?)';
     const [result] = await db.execute(query, [
       doctorId,
-      patientName,
+      patientId,
       appointmentDate,
-      userId,
       description,
     ]);
     return result;
@@ -43,21 +41,6 @@ async function getAppointmentsByUserId(userId) {
   }
 }
 
-async function getAppointmentsWithDoctorDetails(userId) {
-  try {
-    const query = `
-      SELECT a.*, d.name AS doctor_name, d.specialty, d.gender AS doctor_gender, d.contact_number AS doctor_contact
-      FROM appointments a
-      INNER JOIN doctors d ON a.doctor_id = d.id
-      WHERE a.user_id = ?
-    `;
-    const [results] = await db.execute(query, [userId]);
-    return results;
-  } catch (error) {
-    throw new Error('Error fetching appointments with doctor details');
-  }
-}
-
 async function getAppointments() {
   try {
     const query = 'SELECT * FROM appointments';
@@ -65,6 +48,25 @@ async function getAppointments() {
     return results;
   } catch (error) {
     throw new Error('Error fetching appointments');
+  }
+}
+
+async function getAppointmentById(appointmentId) {
+  try {
+    // Retrieve appointment details from the database
+    const query = `
+      SELECT a.id AS appointment_id, a.appointment_date, a.description, 
+             p.id AS patient_id, p.username AS patient_username, p.profile_image AS patient_profile_image,
+             d.id AS doctor_id, d.username AS doctor_username, d.profile_image AS doctor_profile_image
+      FROM appointments a
+      LEFT JOIN users p ON a.patient_id = p.id
+      LEFT JOIN users d ON a.doctor_id = d.id
+      WHERE a.id = ?;
+    `;
+    const [result] = await db.execute(query, [appointmentId]);
+    return result[0];
+  } catch (error) {
+    throw new Error('Error fetching appointment details');
   }
 }
 
@@ -92,8 +94,8 @@ module.exports = {
   scheduleAppointment,
   getAppointmentsByDoctorId,
   getAppointmentsByUserId,
-  getAppointmentsWithDoctorDetails,
   getAppointments,
+  getAppointmentById,
   softDeleteAppointment,
   permanentDeleteAppointment,
 };

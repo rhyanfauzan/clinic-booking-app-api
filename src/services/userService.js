@@ -80,6 +80,20 @@ async function getAllUsersByRole(role) {
   }
 }
 
+async function getDoctorUserId(doctorName) {
+  try {
+    const query = 'SELECT id FROM users WHERE role = "doctor" AND name = ?'; // Adjust your query to find the doctor's userId
+    const [result] = await db.execute(query, [doctorName]);
+    if (result.length > 0) {
+      return result[0].id;
+    } else {
+      throw new Error('Doctor not found');
+    }
+  } catch (error) {
+    throw new Error('Error fetching doctor ID');
+  }
+}
+
 async function deleteUserById(userId) {
   try {
     const query = 'DELETE FROM users WHERE id = ?';
@@ -95,5 +109,6 @@ module.exports = {
   loginUser,
   getAllUsers,
   getAllUsersByRole,
+  getDoctorUserId,
   deleteUserById,
 };

@@ -3,27 +3,20 @@ const {
   scheduleAppointment,
   getAppointmentsByDoctorId,
   getAppointmentsByUserId,
-  getAppointmentsWithDoctorDetails,
   getAppointments,
+  getAppointmentById,
   softDeleteAppointment,
   permanentDeleteAppointment,
 } = require('../services/appointmentService');
 
 async function schedule(req, res) {
-  const { doctorId, patientName, appointmentDate, userId, description } =
-    req.body;
+  const { doctorId, appointmentDate, description, patientId } = req.body;
 
-  if (
-    !doctorId ||
-    !patientName ||
-    !appointmentDate ||
-    !userId ||
-    !description
-  ) {
+  if (!doctorId || !appointmentDate || !description || !patientId) {
     return res.status(400).json({
       status: false,
       message:
-        'Please provide doctorId, patientName, appointmentDate, userId, and description',
+        'Please provide doctorId, appointmentDate, description, and patientId',
       result: null,
     });
   }
@@ -31,9 +24,8 @@ async function schedule(req, res) {
   try {
     await scheduleAppointment(
       doctorId,
-      patientName,
+      patientId,
       appointmentDate,
-      userId,
       description
     );
     res.status(201).json({
@@ -42,6 +34,7 @@ async function schedule(req, res) {
       result: null,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
       message: 'Error scheduling appointment',
@@ -69,6 +62,7 @@ async function getAppointmentsByDoctor(req, res) {
       result: appointments,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
       message: 'Error fetching appointments by doctor ID',
@@ -96,6 +90,7 @@ async function getAppointmentsByUser(req, res) {
       result: appointments,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
       message: 'Error fetching appointments by user ID',
@@ -104,28 +99,28 @@ async function getAppointmentsByUser(req, res) {
   }
 }
 
-async function getAppointmentsByUser(req, res) {
-  const userId = req.params.userId;
-
-  if (!userId) {
-    return res.status(400).json({
-      status: false,
-      message: 'Please provide a user ID',
-      result: null,
-    });
-  }
+async function getAppointmentDetails(req, res) {
+  const appointmentId = req.params.appointmentId;
 
   try {
-    const appointments = await getAppointmentsWithDoctorDetails(userId);
+    const appointment = await getAppointmentById(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({
+        status: false,
+        message: 'Appointment not found',
+        result: null,
+      });
+    }
     res.status(200).json({
       status: true,
-      message: 'Appointments retrieved by user ID',
-      result: appointments,
+      message: 'Appointment details retrieved successfully',
+      result: appointment,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
-      message: 'Error fetching appointments by user ID',
+      message: 'Error fetching appointment details',
       result: null,
     });
   }
@@ -140,6 +135,7 @@ async function getAllAppointments(req, res) {
       result: appointments,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
       message: 'Error fetching appointments',
@@ -167,6 +163,7 @@ async function softDelete(req, res) {
       result: null,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
       message: 'Error soft deleting appointment',
@@ -194,6 +191,7 @@ async function permanentDelete(req, res) {
       result: null,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: false,
       message: 'Error permanently deleting appointment',
@@ -206,6 +204,7 @@ module.exports = {
   schedule,
   getAppointmentsByDoctor,
   getAppointmentsByUser,
+  getAppointmentDetails,
   getAllAppointments,
   softDelete,
   permanentDelete,
