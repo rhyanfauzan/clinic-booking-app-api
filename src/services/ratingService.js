@@ -1,18 +1,6 @@
 // services/ratingService.js - Rating Service Handling Database Operations
 const db = require('../../db');
 
-async function addReview(doctorId, userId, comment, rating, fullName) {
-  try {
-    const query = `
-      INSERT INTO rating (doctor_id, user_id, comment, rating, full_name)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    await db.query(query, [doctorId, userId, comment, rating, fullName]);
-  } catch (error) {
-    throw new Error('Error creating rating');
-  }
-}
-
 async function createRating(doctorId, userId, comment, rating, fullName) {
   try {
     // Insert the new review into the rating table

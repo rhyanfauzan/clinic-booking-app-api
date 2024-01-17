@@ -16,7 +16,7 @@ async function registerUser(
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const query =
-      'INSERT INTO users (username, full_name, email, password, role, profile_image, contact) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO users (username, full_name, email, password, role, profile_image, contact, rating) VALUES (?, ?, ?, ?, ?, ?, ?, 0)';
     const [result] = await db.execute(query, [
       username,
       fullName, // Insert full_name into the query
@@ -62,7 +62,8 @@ async function loginUser(email, password) {
 
 async function getAllUsers() {
   try {
-    const query = 'SELECT * FROM users';
+    const query =
+      'SELECT id, username, email, full_name, role, profile_image, rating FROM users';
     const [results] = await db.execute(query);
     return results;
   } catch (error) {
@@ -72,7 +73,8 @@ async function getAllUsers() {
 
 async function getAllUsersByRole(role) {
   try {
-    const query = 'SELECT * FROM users WHERE role = ?';
+    const query =
+      'SELECT id, username, email, full_name, role, profile_image, rating FROM users WHERE role = ?';
     const [users] = await db.execute(query, [role]);
     return users;
   } catch (error) {
