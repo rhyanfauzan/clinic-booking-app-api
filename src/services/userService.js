@@ -1,7 +1,7 @@
 // services/userService.js - User Service Handling Database Operations
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const db = require('../../db');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const db = require("../../db");
 
 // services/userService.js - User Service Handling Database Operations
 async function registerUser(
@@ -16,7 +16,7 @@ async function registerUser(
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const query =
-      'INSERT INTO users (username, full_name, email, password, role, profile_image, contact, rating) VALUES (?, ?, ?, ?, ?, ?, ?, 0)';
+      "INSERT INTO users (username, full_name, email, password, role, profile_image, contact, rating) VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
     const [result] = await db.execute(query, [
       username,
       fullName, // Insert full_name into the query
@@ -28,17 +28,17 @@ async function registerUser(
     ]);
     return result;
   } catch (error) {
-    throw new Error('Error registering user');
+    throw new Error("Error registering user");
   }
 }
 
 async function loginUser(email, password) {
   try {
-    const query = 'SELECT id, role, password FROM users WHERE email = ?';
+    const query = "SELECT * FROM users WHERE email = ?";
     const [results] = await db.execute(query, [email]);
 
     if (results.length === 0) {
-      throw new Error('Invalid email or password');
+      throw new Error("Invalid email or password");
     }
 
     const user = results[0];
@@ -46,39 +46,39 @@ async function loginUser(email, password) {
     if (match) {
       const token = jwt.sign(
         { userId: user.id, role: user.role },
-        'your_secret_key',
+        "your_secret_key",
         {
-          expiresIn: '1h',
+          expiresIn: "12h",
         }
       );
-      return { token, role: user.role };
+      return { userID: user.id, token, userData: user };
     } else {
-      throw new Error('Invalid email or password');
+      throw new Error("Invalid email or password");
     }
   } catch (error) {
-    throw new Error('Error logging in');
+    throw new Error("Error logging in");
   }
 }
 
 async function getAllUsers() {
   try {
     const query =
-      'SELECT id, username, email, full_name, role, profile_image, rating FROM users';
+      "SELECT id, username, email, full_name, role, profile_image, rating FROM users";
     const [results] = await db.execute(query);
     return results;
   } catch (error) {
-    throw new Error('Error fetching users');
+    throw new Error("Error fetching users");
   }
 }
 
 async function getAllUsersByRole(role) {
   try {
     const query =
-      'SELECT id, username, email, full_name, role, profile_image, rating FROM users WHERE role = ?';
+      "SELECT id, username, email, full_name, role, profile_image, rating FROM users WHERE role = ?";
     const [users] = await db.execute(query, [role]);
     return users;
   } catch (error) {
-    throw new Error('Error fetching users by role');
+    throw new Error("Error fetching users by role");
   }
 }
 
@@ -89,20 +89,20 @@ async function getDoctorUserId(doctorName) {
     if (result.length > 0) {
       return result[0].id;
     } else {
-      throw new Error('Doctor not found');
+      throw new Error("Doctor not found");
     }
   } catch (error) {
-    throw new Error('Error fetching doctor ID');
+    throw new Error("Error fetching doctor ID");
   }
 }
 
 async function deleteUserById(userId) {
   try {
-    const query = 'DELETE FROM users WHERE id = ?';
+    const query = "DELETE FROM users WHERE id = ?";
     const [result] = await db.execute(query, [userId]);
     return result;
   } catch (error) {
-    throw new Error('Error deleting user');
+    throw new Error("Error deleting user");
   }
 }
 
