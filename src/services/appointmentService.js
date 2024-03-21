@@ -33,7 +33,7 @@ async function getAppointmentsByDoctorId(doctorId) {
 
 async function getAppointmentsByUserId(userId) {
   try {
-    const query = 'SELECT * FROM appointments WHERE user_id = ?';
+    const query = 'SELECT * FROM appointments WHERE patient_id = ?';
     const [results] = await db.execute(query, [userId]);
     return results;
   } catch (error) {

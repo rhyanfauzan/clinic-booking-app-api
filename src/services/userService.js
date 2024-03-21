@@ -82,6 +82,17 @@ async function getAllUsersByRole(role) {
   }
 }
 
+async function getUsersById(userId) {
+  try {
+    const query =
+      "SELECT id, username, email, full_name, role, profile_image, rating FROM users WHERE id = ?";
+    const [users] = await db.execute(query, [userId]);
+    return users;
+  } catch (error) {
+    throw new Error("Error fetching users by userId");
+  }
+}
+
 async function getDoctorUserId(doctorName) {
   try {
     const query = 'SELECT id FROM users WHERE role = "doctor" AND name = ?'; // Adjust your query to find the doctor's userId
@@ -111,6 +122,7 @@ module.exports = {
   loginUser,
   getAllUsers,
   getAllUsersByRole,
+  getUsersById,
   getDoctorUserId,
   deleteUserById,
 };

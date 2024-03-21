@@ -6,6 +6,7 @@ const {
   loginUser,
   getAllUsers,
   getAllUsersByRole,
+  getUsersById,
   deleteUserById,
 } = require("../services/userService");
 
@@ -121,6 +122,35 @@ async function getUsersByRole(req, res) {
   }
 }
 
+
+async function getUserById(req, res) {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(400).json({
+      status: false,
+      message: "Please provide a id parameter",
+      result: null,
+    });
+  }
+
+  try {
+    const users = await getUsersById(id);
+    res.status(200).json({
+      status: true,
+      message: "Users retrieved successfully by id",
+      result: users,
+    });
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({
+      status: false,
+      message: "Error fetching users by id",
+      result: null,
+    });
+  }
+}
+
 async function deleteUser(req, res) {
   const userId = req.params.userId;
 
@@ -148,4 +178,4 @@ async function deleteUser(req, res) {
   }
 }
 
-module.exports = { register, login, getUsers, getUsersByRole, deleteUser };
+module.exports = { register, login, getUsers, getUsersByRole, getUserById, deleteUser };
