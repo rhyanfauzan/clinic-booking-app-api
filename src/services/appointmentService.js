@@ -56,8 +56,8 @@ async function getAppointmentById(appointmentId) {
     // Retrieve appointment details from the database
     const query = `
       SELECT a.id AS appointment_id, a.appointment_date, a.description, 
-             p.id AS patient_id, p.username AS patient_username, p.profile_image AS patient_profile_image,
-             d.id AS doctor_id, d.username AS doctor_username, d.profile_image AS doctor_profile_image
+             p.id AS patient_id, p.full_name AS patient_username, p.profile_image AS patient_profile_image,
+             d.id AS doctor_id, d.full_name AS doctor_username, d.profile_image AS doctor_profile_image
       FROM appointments a
       LEFT JOIN users p ON a.patient_id = p.id
       LEFT JOIN users d ON a.doctor_id = d.id
